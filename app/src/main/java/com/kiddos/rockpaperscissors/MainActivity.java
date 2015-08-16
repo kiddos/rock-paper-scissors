@@ -307,6 +307,8 @@ public class MainActivity extends Activity {
 			Log.i("MyScore", Arrays.toString(extractArrayList(myScoreRecord)));
 			Log.i("AndroidScore", Arrays.toString(extractArrayList(androidScoreRecord)));
 			startActivity(intent);
+		} else if (id == R.id.action_clear_ml) {
+			ml.clearData();
 		}
 		return super.onOptionsItemSelected(item);
 	}
