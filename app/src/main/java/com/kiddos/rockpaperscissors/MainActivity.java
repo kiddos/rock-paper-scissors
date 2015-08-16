@@ -23,8 +23,7 @@ public class MainActivity extends Activity {
 	private static final int NUMBER_OF_GAMES = 5;
 	private ImageButton rock, paper, scissors;
 	private TextView result, myScore, androidScore;
-	private ImageView android;
-	private CheckBox learning;
+	private ImageView android, me;
 	private ArrayList<Integer> myScoreRecord, androidScoreRecord;
 	private boolean isLearning = false;
 	private int[] series = {NONE, NONE, NONE, NONE, NONE};
@@ -40,9 +39,10 @@ public class MainActivity extends Activity {
 		scissors = (ImageButton) findViewById(R.id.ibScissors);
 		result = (TextView) findViewById(R.id.tvResult);
 		android = (ImageView) findViewById(R.id.ivAndroid);
+		me = (ImageView) findViewById(R.id.ivMe);
 		myScore = (TextView) findViewById(R.id.tvMe);
 		androidScore = (TextView) findViewById(R.id.tvAndroid);
-		learning = (CheckBox) findViewById(R.id.cbLearning);
+		CheckBox learning = (CheckBox) findViewById(R.id.cbLearning);
 
 		// initialize
 		myScoreRecord = new ArrayList<>();
@@ -221,6 +221,15 @@ public class MainActivity extends Activity {
 				} else if (androidChoice == SCISSORS) {
 					android.setImageResource(R.drawable.scissors);
 				}
+				// display my choice
+				if (myChoice == ROCK) {
+					me.setImageResource(R.drawable.rock);
+				} else if (myChoice == PAPER) {
+					me.setImageResource(R.drawable.paper);
+				} else {
+					me.setImageResource(R.drawable.scissors);
+				}
+
 
 				// compute result
 				int result = compute(androidChoice, myChoice);
