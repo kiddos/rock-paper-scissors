@@ -1,11 +1,12 @@
 package com.kiddos.rockpaperscissors;
 
+import java.io.Serializable;
 import java.util.*;
 
 import android.util.Log;
 import libsvm.*;
 
-public class MachineLearning {
+public class MachineLearning implements Serializable {
 	private svm_model model;
 	private svm_problem problem;
 	private ArrayList<svm_node[]> vectorSet;

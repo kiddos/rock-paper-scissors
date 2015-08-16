@@ -9,9 +9,7 @@ import android.util.Log;
 import android.view.*;
 import android.widget.*;
 
-import java.io.File;
-import java.io.ObjectOutput;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.util.*;
 
 
@@ -309,16 +307,30 @@ public class MainActivity extends Activity {
 	}
 
 	private void saveSVM() {
-		String output = Environment.getExternalStorageDirectory().getPath();
-		String dir = output + "/rock-paper-scissors";
-		File dataDir = new File(dir);
-		if(dataDir.mkdir()) {
-			Log.i("Saving SVM:", "Directory created");
+		if (ml != null) {
+			String output = Environment.getExternalStorageDirectory().getPath();
+			String dir = output + "/rock-paper-scissors";
+			File dataDir = new File(dir);
+			if(dataDir.mkdir()) {
+				Log.i("Saving SVM:", "Directory created");
+			} else {
+				Log.i("Saving SVM:", "Data Directory already exist");
+			}
+
+			File outputFile = new File(dataDir.getPath() + "/rps.data");
+			Log.i("Saving SVM:", outputFile.getPath());
+			try {
+				FileOutputStream fo = new FileOutputStream(outputFile);
+				ObjectOutputStream oo = new ObjectOutputStream(fo);
+				oo.writeObject(ml);
+				oo.flush();
+				oo.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		} else {
-			Log.i("Saving SVM:", "Data Directory already exist");
+			Log.i("Saving SVM:", "SVM is null");
 		}
-
-
 	}
 
 	@Override
