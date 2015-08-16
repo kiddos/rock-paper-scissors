@@ -2,8 +2,6 @@
 	<string name="app_name">Rock Paper Scissors</string>
 	<string name="action_score">Score</string>
 	<string name="action_exit">Exit</string>
+	<string name="action_keep_playing">Keep Playing</string>
 	<string name="title_activity_score">Score</string>
-
-	<string name="hello_world">Hello world!</string>
-	<string name="action_settings">Settings</string>
 </resources>

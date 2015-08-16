@@ -22,4 +22,5 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile files('src/main/res/libs/libsvm.jar')
 }

@@ -1,8 +1,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
 	  xmlns:tools="http://schemas.android.com/tools"
 	  tools:context="com.kiddos.rockpaperscissors.Score">
-	<item android:id="@+id/action_settings"
-		  android:title="@string/action_settings"
+	<item android:id="@+id/action_keep_playing"
+		  android:title="@string/action_keep_playing"
+		  android:orderInCategory="100"
+		  android:showAsAction="never"/>
+	<item android:id="@+id/action_exit"
+		  android:title="@string/action_exit"
 		  android:orderInCategory="100"
 		  android:showAsAction="never"/>
 </menu>

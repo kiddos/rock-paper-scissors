@@ -4,17 +4,17 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.*;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.MotionEvent;
-import android.view.View;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.util.Log;
+import android.view.*;
+import android.widget.*;
 
-import java.util.Random;
+import java.util.*;
+
+import libsvm.*;
+
 
 public class MainActivity extends Activity {
+	private static final int NONE = -1;
 	private static final int ROCK = 0;
 	private static final int PAPER = 1;
 	private static final int SCISSORS = 2;
@@ -26,6 +26,12 @@ public class MainActivity extends Activity {
 	private ImageButton rock, paper, scissors;
 	private TextView result, myScore, androidScore;
 	private ImageView android;
+	private CheckBox learning;
+	private ArrayList<Integer> myScoreRecord, androidScoreRecord;
+	private boolean isLearning = false;
+	private int[] series = {NONE, NONE, NONE, NONE, NONE};
+	// machine learning
+	MachineLearning ml;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -38,20 +44,34 @@ public class MainActivity extends Activity {
 		android = (ImageView) findViewById(R.id.ivAndroid);
 		myScore = (TextView) findViewById(R.id.tvMe);
 		androidScore = (TextView) findViewById(R.id.tvAndroid);
-
-		// events
-		ButtonHandler handler = new ButtonHandler();
-		rock.setOnTouchListener(handler);
-		paper.setOnTouchListener(handler);
-		scissors.setOnTouchListener(handler);
+		learning = (CheckBox) findViewById(R.id.cbLearning);
 
 		// initialize
+		myScoreRecord = new ArrayList<>();
+		androidScoreRecord = new ArrayList<>();
+
 		if (myScore.getText().toString().equals("")) {
 			myScore.setText("0");
 		}
 		if (androidScore.getText().toString().equals("")) {
 			androidScore.setText("0");
 		}
+
+		// events
+		ButtonHandler handler = new ButtonHandler();
+		rock.setOnTouchListener(handler);
+		paper.setOnTouchListener(handler);
+		scissors.setOnTouchListener(handler);
+		learning.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+				if (isChecked) {
+					isLearning = true;
+				} else {
+					isLearning = false;
+				}
+			}
+		});
 	}
 
 	// button Handler
@@ -116,6 +136,12 @@ public class MainActivity extends Activity {
 			}
 		}
 
+		// add the record
+		private void addRecord(int myScore, int androidScore) {
+			myScoreRecord.add(myScore);
+			androidScoreRecord.add(androidScore);
+		}
+
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
 			int androidChoice = getAndroidChoice();
@@ -165,10 +191,14 @@ public class MainActivity extends Activity {
 					MainActivity.this.result.setText("You\n" + RESULT);
 					myScore.setText("0");
 					androidScore.setText("0");
+
+					addRecord(m, a);
 				} else if (a >= limit) {
 					MainActivity.this.result.setText("Android\n" + RESULT);
 					myScore.setText("0");
 					androidScore.setText("0");
+
+					addRecord(m, a);
 				}
 			} else if(event.getAction() == MotionEvent.ACTION_UP){
 				rock.setImageBitmap(nonClickedRock);
@@ -186,6 +216,14 @@ public class MainActivity extends Activity {
 		return true;
 	}
 
+	private int[] extractArrayList(ArrayList<Integer> a) {
+		int[] list = new int[a.size()];
+		for (int i = 0 ; i < a.size() ; i ++) {
+			list[i] = a.get(i);
+		}
+		return list;
+	}
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		int id = item.getItemId();
@@ -194,6 +232,13 @@ public class MainActivity extends Activity {
 			return true;
 		} else if (id == R.id.action_score) {
 			Intent intent = new Intent(MainActivity.this, Score.class);
+			Bundle bundle = new Bundle();
+			bundle.putIntArray("MyScore", extractArrayList(myScoreRecord));
+			bundle.putIntArray("AndroidScore", extractArrayList(androidScoreRecord));
+			intent.putExtras(bundle);
+
+			Log.i("MyScore", Arrays.toString(extractArrayList(myScoreRecord)));
+			Log.i("AndroidScore", Arrays.toString(extractArrayList(androidScoreRecord)));
 			startActivity(intent);
 		}
 		return super.onOptionsItemSelected(item);
