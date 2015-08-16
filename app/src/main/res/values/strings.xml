@@ -3,5 +3,7 @@
 	<string name="action_score">Score</string>
 	<string name="action_exit">Exit</string>
 	<string name="action_keep_playing">Keep Playing</string>
+	<string name="action_clear">Clear</string>
+	<string name="action_clear_ml">Make Android Stupid</string>
 	<string name="title_activity_score">Score</string>
 </resources>

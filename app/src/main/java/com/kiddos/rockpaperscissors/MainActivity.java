@@ -4,10 +4,14 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.*;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.*;
 import android.widget.*;
 
+import java.io.File;
+import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
 import java.util.*;
 
 
@@ -302,5 +306,24 @@ public class MainActivity extends Activity {
 			startActivity(intent);
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	private void saveSVM() {
+		String output = Environment.getExternalStorageDirectory().getPath();
+		String dir = output + "/rock-paper-scissors";
+		File dataDir = new File(dir);
+		if(dataDir.mkdir()) {
+			Log.i("Saving SVM:", "Directory created");
+		} else {
+			Log.i("Saving SVM:", "Data Directory already exist");
+		}
+
+
+	}
+
+	@Override
+	protected void onStop() {
+		super.onStop();
+		saveSVM();
 	}
 }
