@@ -2,6 +2,7 @@ package com.kiddos.rockpaperscissors;
 
 import java.util.*;
 
+import android.util.Log;
 import libsvm.*;
 
 public class MachineLearning {
@@ -39,11 +40,53 @@ public class MachineLearning {
 	public void addVector(int[] v, double c) {
 		svm_node[] vec = new svm_node[v.length];
 		for (int i = 0 ; i < v.length ; i++) {
+			vec[i] = new svm_node();
 			vec[i].index = i;
 			vec[i].value = v[i];
 		}
 
-		valueSet.add(c);
 		vectorSet.add(vec);
+		valueSet.add(c);
+	}
+
+	public void train() {
+		if (vectorSet.size() != 0) {
+			if (problem == null)
+				problem = new svm_problem();
+
+			int l = vectorSet.size();
+			int nodeL = vectorSet.get(0).length;
+			problem.l = l;
+			problem.x = new svm_node[l][nodeL];
+			problem.y = new double[l];
+			for (int i = 0 ; i < l ; i ++) {
+				problem.x[i] = vectorSet.get(i);
+				problem.y[i] = valueSet.get(i);
+			}
+
+			model = svm.svm_train(problem, parameter);
+		} else {
+			Log.d("ML", "no data to train");
+		}
+	}
+
+	public void clearData() {
+		vectorSet = new ArrayList<>();
+		valueSet = new ArrayList<>();
+		problem = new svm_problem();
+	}
+
+	public int predict(int[] series) {
+		svm_node[] s = new svm_node[series.length];
+		for (int i = 0 ; i < series.length ; i ++) {
+			s[i] = new svm_node();
+			s[i].index = i;
+			s[i].value = series[i];
+		}
+		if (model != null) {
+			double result = svm.svm_predict(model, s);
+			return (int)result;
+		}
+		return -1;
 	}
 }

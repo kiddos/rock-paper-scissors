@@ -10,8 +10,6 @@ import android.widget.*;
 
 import java.util.*;
 
-import libsvm.*;
-
 
 public class MainActivity extends Activity {
 	private static final int NONE = -1;
@@ -56,6 +54,7 @@ public class MainActivity extends Activity {
 		if (androidScore.getText().toString().equals("")) {
 			androidScore.setText("0");
 		}
+		ml = new MachineLearning();
 
 		// events
 		ButtonHandler handler = new ButtonHandler();
@@ -69,6 +68,7 @@ public class MainActivity extends Activity {
 					isLearning = true;
 				} else {
 					isLearning = false;
+					ml.train();
 				}
 			}
 		});
@@ -96,11 +96,50 @@ public class MainActivity extends Activity {
 			return clickedBitmap;
 		}
 
+		private boolean isValidChoice(int choice) {
+			int[] validChoice = {ROCK, PAPER, SCISSORS};
+			for (int vc : validChoice) {
+				if (vc == choice) return true;
+			}
+			return false;
+		}
+
 		// compute android's random choice
 		private int getAndroidChoice() {
+			if (!isLearning) {
+				int myChoice = ml.predict(series);
+				Log.d("Series", Arrays.toString(series));
+				Log.d("ML predict my choice: ", "" + myChoice);
+				if (isValidChoice(myChoice)) {
+					int androidChoice = ROCK;
+					if (myChoice == ROCK) {
+						androidChoice = PAPER;
+					} else if (myChoice == PAPER) {
+						androidChoice = SCISSORS;
+					} else if (myChoice == SCISSORS) {
+						androidChoice = ROCK;
+					}
+					return androidChoice;
+				}
+			}
 			int choice[] = {ROCK, PAPER, SCISSORS};
 			Random r = new Random();
 			return choice[r.nextInt(choice.length)];
+		}
+
+		private void addChoiceToSeries(int choice) {
+			for (int i = 0 ; i < series.length ; i ++) {
+				if (series[i] == NONE) {
+					series[i] = choice;
+					return;
+				}
+			}
+
+			// else clear the series and add
+			for (int i = 0 ; i < series.length ; i ++) {
+				series[i] = NONE;
+			}
+			series[0] = choice;
 		}
 
 		// compute result
@@ -144,7 +183,12 @@ public class MainActivity extends Activity {
 
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
+			// get android choice
+			// *** NOTE ***
+			// android choose BEFORE it even "knows" user's choice
+			// don't even think that he cheated
 			int androidChoice = getAndroidChoice();
+			// get my choice
 			int myChoice = 0;
 			if (event.getAction() == MotionEvent.ACTION_DOWN) {
 				switch(v.getId()) {
@@ -160,6 +204,13 @@ public class MainActivity extends Activity {
 						scissors.setImageBitmap(clickedScissors);
 						myChoice = SCISSORS;
 						break;
+				}
+
+				// machine learning
+				addChoiceToSeries(myChoice);
+				if (isLearning) {
+					ml.addVector(series, myChoice);
+					Log.d("Series", Arrays.toString(series));
 				}
 
 				// display android's choice
