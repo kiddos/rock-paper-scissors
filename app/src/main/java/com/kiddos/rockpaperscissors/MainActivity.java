@@ -23,6 +23,8 @@ public class MainActivity extends Activity {
 	private static final String[] LOSE = {"Nah", "BOOOOO", "You Lose", "You Sucks"};
 	private static final String RESULT = "wins\nthe series";
 	private static final int NUMBER_OF_GAMES = 5;
+	private static final String DATA_DIRECTORY = "/rock-paper-scissors";
+	private static final String DATA_FILE = "/rps.data";
 	private ImageButton rock, paper, scissors;
 	private TextView result, myScore, androidScore;
 	private ImageView android, me;
@@ -74,6 +76,9 @@ public class MainActivity extends Activity {
 				}
 			}
 		});
+
+		// load SVM
+		loadSVM();
 	}
 
 	// button Handler
@@ -309,7 +314,7 @@ public class MainActivity extends Activity {
 	private void saveSVM() {
 		if (ml != null) {
 			String output = Environment.getExternalStorageDirectory().getPath();
-			String dir = output + "/rock-paper-scissors";
+			String dir = output + DATA_DIRECTORY;
 			File dataDir = new File(dir);
 			if(dataDir.mkdir()) {
 				Log.i("Saving SVM:", "Directory created");
@@ -317,19 +322,40 @@ public class MainActivity extends Activity {
 				Log.i("Saving SVM:", "Data Directory already exist");
 			}
 
-			File outputFile = new File(dataDir.getPath() + "/rps.data");
+			File outputFile = new File(dataDir.getPath() + DATA_FILE);
 			Log.i("Saving SVM:", outputFile.getPath());
 			try {
 				FileOutputStream fo = new FileOutputStream(outputFile);
 				ObjectOutputStream oo = new ObjectOutputStream(fo);
 				oo.writeObject(ml);
 				oo.flush();
+
+				fo.close();
 				oo.close();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		} else {
 			Log.i("Saving SVM:", "SVM is null");
+		}
+	}
+
+	private void loadSVM() {
+		String external = Environment.getExternalStorageDirectory().getPath();
+		File data = new File(external + DATA_DIRECTORY + DATA_FILE);
+		if (data.exists()) {
+			try {
+				FileInputStream fi = new FileInputStream(data);
+				ObjectInputStream oi = new ObjectInputStream(fi);
+				ml = (MachineLearning) oi.readObject();
+
+				fi.close();
+				oi.close();
+			} catch (ClassNotFoundException | IOException e) {
+				e.printStackTrace();
+			}
+		} else {
+			Log.i("Loading SVM:", data.getPath() + " does not exist");
 		}
 	}
 
