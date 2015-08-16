@@ -75,7 +75,7 @@ public class MachineLearning implements Serializable {
 		vectorSet = new ArrayList<>();
 		valueSet = new ArrayList<>();
 		problem = new svm_problem();
-		model = new svm_model();
+		model = null;
 	}
 
 	public int predict(int[] series) {
