@@ -9,13 +9,16 @@ import android.widget.*;
 import java.util.*;
 
 public class Score extends Activity {
+	private ListView record;
+	private RecordAdapter recordAdapter;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_score);
 
-		ListView record = (ListView) findViewById(R.id.lvScore);
+		// find view
+		record = (ListView) findViewById(R.id.lvScore);
 
 		Intent i = getIntent();
 		Bundle bundle = i.getExtras();
@@ -23,7 +26,7 @@ public class Score extends Activity {
 			int[] myScore = bundle.getIntArray("MyScore");
 			int[] androidScore = bundle.getIntArray("AndroidScore");
 
-			RecordAdapter recordAdapter = new RecordAdapter(Score.this, myScore, androidScore);
+			recordAdapter = new RecordAdapter(Score.this, myScore, androidScore);
 			record.setAdapter(recordAdapter);
 		}catch(Exception e) {
 			Log.d("Score Activity", e.toString());
@@ -43,6 +46,10 @@ public class Score extends Activity {
 			return true;
 		} else if (id == R.id.action_keep_playing) {
 			finish();
+		} else if (id == R.id.action_clear) {
+			recordAdapter.clearData();
+			recordAdapter.notifyDataSetChanged();
+			record.setAdapter(recordAdapter);
 		}
 
 		return super.onOptionsItemSelected(item);
@@ -59,6 +66,11 @@ public class Score extends Activity {
 			this.androidRecord = androidRecord;
 
 			layoutInflater = (LayoutInflater) this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		}
+
+		public void clearData() {
+			myRecord = new int[0];
+			androidRecord = new int[0];
 		}
 
 		@Override

@@ -309,6 +309,7 @@ public class MainActivity extends Activity {
 			startActivity(intent);
 		} else if (id == R.id.action_clear_ml) {
 			ml.clearData();
+			Toast.makeText(MainActivity.this, "Oh! I Forgot what I learned", Toast.LENGTH_SHORT).show();
 		}
 		return super.onOptionsItemSelected(item);
 	}
