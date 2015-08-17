@@ -309,6 +309,7 @@ public class MainActivity extends Activity {
 			startActivity(intent);
 		} else if (id == R.id.action_clear_ml) {
 			ml.clearData();
+			deleteSVM();
 			Toast.makeText(MainActivity.this, "Oh! I Forgot what I learned", Toast.LENGTH_SHORT).show();
 		}
 		return super.onOptionsItemSelected(item);
@@ -359,6 +360,22 @@ public class MainActivity extends Activity {
 			}
 		} else {
 			Log.i("Loading SVM:", data.getPath() + " does not exist");
+		}
+	}
+
+	private void deleteSVM() {
+		String external = Environment.getExternalStorageDirectory().getPath();
+		File data = new File(external + DATA_DIRECTORY + DATA_FILE);
+		if (data.exists()) {
+			try {
+				if (data.delete()) {
+					Log.i("Delete SVM:", "SVM is deleted");
+				} else {
+					Log.i("Delete SVM:", "Fail to Delete SVM data");
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
