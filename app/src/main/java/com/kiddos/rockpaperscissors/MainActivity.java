@@ -3,8 +3,7 @@ package com.kiddos.rockpaperscissors;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.*;
-import android.os.Bundle;
-import android.os.Environment;
+import android.os.*;
 import android.util.Log;
 import android.view.*;
 import android.widget.*;
@@ -32,7 +31,7 @@ public class MainActivity extends Activity {
 	private boolean isLearning = false;
 	private int[] series = {NONE, NONE, NONE, NONE, NONE};
 	// machine learning
-	MachineLearning ml;
+	private MachineLearning ml;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
