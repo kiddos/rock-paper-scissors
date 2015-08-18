@@ -77,7 +77,13 @@ public class MainActivity extends Activity {
 		});
 
 		// load SVM
-		loadSVM();
+		Thread thread = new Thread() {
+			@Override
+			public void run() {
+				loadSVM();
+			}
+		};
+		thread.run();
 	}
 
 	// button Handler
@@ -189,14 +195,16 @@ public class MainActivity extends Activity {
 
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
-			// get android choice
-			// *** NOTE ***
-			// android choose BEFORE it even "knows" user's choice
-			// don't even think that he cheated
-			int androidChoice = getAndroidChoice();
-			// get my choice
-			int myChoice = 0;
 			if (event.getAction() == MotionEvent.ACTION_DOWN) {
+				// get android choice
+				// *** NOTE ***
+				// android choose BEFORE it even "knows" user's choice
+				// don't even think that he cheated
+				int androidChoice = getAndroidChoice();
+				Log.d("Android's choice: ", "" +androidChoice);
+
+				// get my choice
+				int myChoice = 0;
 				switch(v.getId()) {
 					case R.id.ibRock:
 						rock.setImageBitmap(clickedRock);
@@ -219,6 +227,7 @@ public class MainActivity extends Activity {
 					Log.d("Series", Arrays.toString(series));
 				}
 
+				Log.d("Android's display: ", "" +androidChoice);
 				// display android's choice
 				if (androidChoice == ROCK) {
 					android.setImageResource(R.drawable.rock);
@@ -309,6 +318,8 @@ public class MainActivity extends Activity {
 		} else if (id == R.id.action_clear_ml) {
 			ml.clearData();
 			deleteSVM();
+			myScoreRecord = new ArrayList<>();
+			androidScoreRecord = new ArrayList<>();
 			Toast.makeText(MainActivity.this, "Oh! I Forgot what I learned", Toast.LENGTH_SHORT).show();
 		}
 		return super.onOptionsItemSelected(item);
